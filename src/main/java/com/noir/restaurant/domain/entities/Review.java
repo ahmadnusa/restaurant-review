@@ -25,7 +25,7 @@ public class Review {
     private String content;
 
     @Field(type = FieldType.Integer)
-    private String rating;
+    private Integer rating;
 
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     private LocalDateTime datePosted;

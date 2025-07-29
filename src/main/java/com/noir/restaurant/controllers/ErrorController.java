@@ -2,6 +2,8 @@ package com.noir.restaurant.controllers;
 
 import com.noir.restaurant.domain.dtos.ErrorDto;
 import com.noir.restaurant.exceptions.BaseException;
+import com.noir.restaurant.exceptions.RestaurantNotFoundException;
+import com.noir.restaurant.exceptions.ReviewNotAllowedException;
 import com.noir.restaurant.exceptions.StorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,32 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
+
+    @ExceptionHandler(ReviewNotAllowedException.class)
+    public ResponseEntity<ErrorDto> handleReviewNotAllowedException(
+            ReviewNotAllowedException ex) {
+        log.error("Caught ReviewNotAllowedException", ex);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                                    .status(HttpStatus.BAD_REQUEST.value())
+                                    .message("The specified review cannot be created or updated")
+                                    .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleRestaurantNotFoundException(
+            RestaurantNotFoundException ex) {
+        log.error("Caught RestaurantNotFoundException", ex);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                                    .status(HttpStatus.NOT_FOUND.value())
+                                    .message("The specified restaurant was not found")
+                                    .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> handleMethodArgumentNotValidException(
